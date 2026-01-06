@@ -11,6 +11,7 @@ from utils import Check
 from cogs.events import EventsCog
 from typing import List
 from sql.user import User
+from cogs.misc import MiscCog
 
 class EconomyCog(commands.Cog):
     def __init__(self, bot: commands.Bot, config: Config, sql: Sql):
@@ -36,15 +37,9 @@ class EconomyCog(commands.Cog):
         self.sql.set_balance(user.id, amount)
         await ctx.send(embed=self.embeds.success(f"Balance set for {user.mention}: {amount}"))
 
-    def bot_channel_check(ctx: commands.Context) -> bool:
-        economy_cog = ctx.bot.get_cog("EconomyCog")
-        if ctx.channel.id != economy_cog.config.bot_channel:
-            raise EventsCog.WrongChannel(message=Check.BOT_CHANNEL.to_status().message)
-        return True
-
     @commands.command("beg", description="Beg for money")
     @commands.cooldown(1, 5, commands.BucketType.user)
-    @commands.check(bot_channel_check)
+    @commands.check(MiscCog.bot_channel_check)
     async def beg(self, ctx: commands.Context):
         opts: list[int] = [50, 50, 50, 50, 50, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 300, 300, 300, 300, 300, 300, 500, 900, 500, 900, 2000]
         amount: int = random.choice(opts)
