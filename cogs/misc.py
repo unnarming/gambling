@@ -3,6 +3,7 @@ from embeds import Embeds
 from config import Config
 from sql import Sql
 from cogs.events import EventsCog
+from utils import Check
 
 class MiscCog(commands.Cog):
     def __init__(self, bot: commands.Bot, config: Config, sql: Sql):
