@@ -2,6 +2,7 @@ from discord.ext import commands
 from embeds import Embeds
 from config import Config
 from sql import Sql
+from cogs.events import EventsCog
 
 class MiscCog(commands.Cog):
     def __init__(self, bot: commands.Bot, config: Config, sql: Sql):
