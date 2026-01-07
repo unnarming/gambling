@@ -99,7 +99,9 @@ class User(SqlBase):
                 session.commit()
                 return Status(status=True)
             else:
-                return Status(message="Balance would be negative")
+                user.balance = 0
+                session.commit()
+                return Status(status=True)
 
     @usercheck
     def get_balance(self, discord_id: int) -> int:
@@ -113,6 +115,8 @@ class User(SqlBase):
             user: User.UserData = session.query(User.UserData).filter_by(discord_id=discord_id).first()
             if user.balance >= amount and user.balance > 0:
                 return Status(status=True)
+            elif amount <= 0:
+                return Status(status=False, message="Amount must be greater than 0")
             else:
                 if user_type == "self":
                     return Check.USER_BAL_SELF.to_status()

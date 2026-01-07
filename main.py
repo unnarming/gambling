@@ -32,7 +32,11 @@ class Main:
         self.bot = Bot(intents, self.config, self.sql)
 
     def run(self) -> None:
-        os.system("cls")
+        # if linux, use clear instead of cls
+        if os.name == "posix":
+            os.system("clear")
+        else:
+            os.system("cls")
         self.bot.run(self.config.TOKEN)
 
 if __name__ == "__main__":

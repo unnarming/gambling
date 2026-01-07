@@ -31,7 +31,7 @@ class CoinflipCog(commands.Cog):
         if not res.status:
             return await ctx.send(embed=self.embeds.error(res.message))
         
-        return await ctx.send(embed=self.embeds.success(f"Coinflip challenge sent to {user.mention}"))
+        return await ctx.send(embed=self.embeds.base(title=f"Coinflip challenge sent to {user.mention} for {amount} money"))
 
     @coinflip.command(name="self", aliases=["me", "s"], description="Coinflip yourself")
     @commands.cooldown(1, 1, commands.BucketType.user)
@@ -43,9 +43,9 @@ class CoinflipCog(commands.Cog):
         
         cf_res.body["winner"]
         if cf_res.body["winner"] == ctx.author.id:
-            return await ctx.send(embed=self.embeds.success(f"You won the coinflip and gained {cf_res.body['amount']} money"))
+            return await ctx.send(embed=self.embeds.base(title="You won the coinflip", description=f"You gained {cf_res.body['amount']} money"))
         else:
-            return await ctx.send(embed=self.embeds.error(f"You lost the coinflip and lost {cf_res.body['amount']} money"))
+            return await ctx.send(embed=self.embeds.base(title="You lost the coinflip", description=f"You lost {cf_res.body['amount']} money"))
 
     @coinflip.command(name="stats", description="View your or another user's coinflip statistics")
     async def stats(self, ctx: commands.Context, user: discord.Member | None = None, txt: str | None = "self"):
@@ -54,8 +54,8 @@ class CoinflipCog(commands.Cog):
         elif user is None:
             return await ctx.send(embed=self.embeds.error("Please specify a user to view statistics"))
         cf_stats: CoinflipStats = self.sql.get_stats(user.id, CoinflipStats)
-        mlostto: discord.User = self.bot.fetch_user(cf_stats.most_lost_to_id)
-        return await ctx.send(embed=self.embeds.success(f"Statistics for {user.mention}:\nGames won: {cf_stats.games_won}\nGames lost: {cf_stats.games_lost}\nMoney won: {cf_stats.money_won}\nMoney lost: {cf_stats.money_lost}\nMost lost: {cf_stats.most_lost}\nMost lost to: {mlostto.mention}\nLoss streak: {cf_stats.loss_streak}"))
+        mlostto: discord.User = await self.bot.fetch_user(cf_stats.most_lost_to_id)
+        return await ctx.send(embed=self.embeds.base(title=f"Statistics for {user.mention}", description=f"Games won: {cf_stats.games_won}\nGames lost: {cf_stats.games_lost}\nMoney won: {cf_stats.money_won}\nMoney lost: {cf_stats.money_lost}\nMost lost: {cf_stats.most_lost}\nMost lost to: {mlostto.mention}\nLoss streak: {cf_stats.loss_streak}"))
 
     @coinflip.command(name="accept", description="Accept a coinflip request")
     async def accept(self, ctx: commands.Context, user: discord.Member | None = None, id: str | None = None):
@@ -67,7 +67,7 @@ class CoinflipCog(commands.Cog):
         
         cf: Coinflip.CoinflipData = res.body
         # send a embed with the coinflip details (winner, loser, amount)
-        return await ctx.send(embed=self.embeds.success(f"<@{cf["winner"]}> just beat <@{cf["loser"]}> in a coinflip of {cf["amount"]}"))
+        return await ctx.send(embed=self.embeds.base(title=f"<@{cf["winner"]}> just beat <@{cf["loser"]}> in a coinflip of {cf["amount"]}", description=""))
 
     @coinflip.command(name="view", description="View your coinflip requests/public coinflips")
     async def view(self, ctx: commands.Context, type: str = Literal["requests", "public", "self"]):
@@ -76,19 +76,19 @@ class CoinflipCog(commands.Cog):
             if not res.status:
                 return await ctx.send(embed=self.embeds.error(res.message))
             cf: List[Coinflip.CoinflipData] = res.body
-            return await ctx.send(embed=self.embeds.success(f"Coinflip requests:\n{'\n'.join([f'<@{cf.requester_id}> vs <@{cf.opponent_id}> for {cf.amount}' for cf in cf])} | ``{cf.id}``"))
+            return await ctx.send(embed=self.embeds.base(title="Incoming Coinflip requests", description=f"{'\n'.join([f'<@{cf.requester_id}> vs <@{cf.opponent_id}> for {cf.amount}' for cf in cf])} | ``{cf.id}``"))
         elif type == "public":
             res: Status = self.sql.get_public_cf()
             if not res.status:
                 return await ctx.send(embed=self.embeds.error(res.message))
             cf: List[Coinflip.CoinflipData] = res.body
-            return await ctx.send(embed=self.embeds.success(f"Public coinflips:\n{'\n'.join([f'<@{cf.requester_id}> vs <@{cf.opponent_id}> for {cf.amount}' for cf in cf])} | ``{cf.id}``"))
+            return await ctx.send(embed=self.embeds.base(title="Public coinflips", description=f"{'\n'.join([f'<@{cf.requester_id}> vs <@{cf.opponent_id}> for {cf.amount}' for cf in cf])} | ``{cf.id}``"))
         elif type == "self":
             res: Status = self.sql.get_coinflips_by_user(ctx.author.id)
             if not res.status:
                 return await ctx.send(embed=self.embeds.error(res.message))
             cf: List[Coinflip.CoinflipData] = res.body
     
-            return await ctx.send(embed=self.embeds.success(f"Coinflip requests:\n{'\n'.join([f'<@{cf.requester_id}> vs <@{cf.opponent_id}> for {cf.amount}' for cf in cf])} | ``{cf.id}``"))
+            return await ctx.send(embed=self.embeds.base(title="Your Coinflip requests", description=f"{'\n'.join([f'<@{cf.requester_id}> vs <@{cf.opponent_id}> for {cf.amount}' for cf in cf])} | ``{cf.id}``"))
         else:
             return await ctx.send(embed=self.embeds.error("Invalid type"))

@@ -25,14 +25,13 @@ class Coinflip(SqlBase):
     def coinflip(self, requester_id: int = 0, req_loss_streak: int = 0, opponent_id: int | None = None, opp_loss_streak: int = 0, amount: int = 100) -> Status:
         odds: list[int] = [self.config.BASE_ODDS, self.config.BASE_ODDS]
 
-        if req_loss_streak > self.config.MAX_LOSS_STREAK:
+        if req_loss_streak >= self.config.MAX_LOSS_STREAK:
             odds[0] = odds[0] * math.pow(req_loss_streak - self.config.MAX_LOSS_STREAK, self.config.STREAK_BIAS)
-        if opp_loss_streak > self.config.MAX_LOSS_STREAK:
+        if opp_loss_streak >= self.config.MAX_LOSS_STREAK:
             odds[1] = odds[1] * math.pow(opp_loss_streak - self.config.MAX_LOSS_STREAK, self.config.STREAK_BIAS)        
 
         total = sum(odds)
         odds = [odds[0] / total * 100, odds[1] / total * 100]
-        print(f"requester odds: {odds[0]}, opponent odds: {odds[1]}")
         rnd = secrets.randbelow(100)
         if rnd < odds[0]:
             winner = requester_id

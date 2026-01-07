@@ -17,3 +17,6 @@ class Embeds:
     
     def success(self, message: str) -> discord.Embed:
         return discord.Embed(colour=discord.Colour.green()).add_field(name="Success", value=message, inline=False)
+
+    def base(self, title: str = "", description: str = "") -> discord.Embed:
+        return discord.Embed(colour=discord.Colour.blurple()).add_field(name=title, value=description, inline=False)
