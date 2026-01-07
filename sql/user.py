@@ -113,7 +113,7 @@ class User(SqlBase):
     def check_balance(self, discord_id: int, amount: int, user_type: Literal["self", "other"] = "self") -> Status:
         with self.session() as session:
             user: User.UserData = session.query(User.UserData).filter_by(discord_id=discord_id).first()
-            if user.balance >= amount and user.balance > 0:
+            if user.balance >= amount and user.balance > 0 and amount > 0:
                 return Status(status=True)
             elif amount <= 0:
                 return Status(status=False, message="Amount must be greater than 0")
