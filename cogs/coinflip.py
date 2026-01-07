@@ -55,7 +55,17 @@ class CoinflipCog(commands.Cog):
             return await ctx.send(embed=self.embeds.error("Please specify a user to view statistics"))
         cf_stats: CoinflipStats = self.sql.get_stats(user.id, CoinflipStats)
         mlostto: discord.User = await self.bot.fetch_user(cf_stats.most_lost_to_id) if cf_stats.most_lost_to_id else None
-        return await ctx.send(embed=self.embeds.base(title=f"Coinflip statistics", description=f"User: {user.mention}\nGames won: ``{cf_stats.games_won}``\nGames lost: ``{cf_stats.games_lost}``\nMoney won: ``{cf_stats.money_won}``\nMoney lost: ``{cf_stats.money_lost}``\nMost lost: ``{cf_stats.most_lost}``\nMost lost to: {mlostto.mention if mlostto else "``None``"}\nLoss streak: ``{cf_stats.loss_streak}``"))
+
+        stats: list[tuple[str, str]] = [
+            ("💰Money Made", f"``{cf_stats.money_won - cf_stats.money_lost}``"),
+            ("🎮Games Played", f"``{cf_stats.games_won + cf_stats.games_lost}``"),
+            ("📈Win Rate", f"``{cf_stats.games_won / (cf_stats.games_won + cf_stats.games_lost) * 100}%``"),
+            ("✅Money Won", f"``{cf_stats.money_won}``"),
+            ("❌Money Lost", f"``{cf_stats.money_lost}``"),
+            ("💸Most Lost", f"``{cf_stats.most_lost} to {mlostto.mention if mlostto else "``None``"}``"),
+        ]
+
+        return await ctx.send(embed=self.embeds.stats(title=f"Coinflip statistics for {user.mention}", *stats))
 
     @coinflip.command(name="accept", description="Accept a coinflip request")
     async def accept(self, ctx: commands.Context, user: discord.Member | None = None, id: str | None = None):

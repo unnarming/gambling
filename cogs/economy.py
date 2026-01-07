@@ -44,11 +44,11 @@ class EconomyCog(commands.Cog):
         amount: int = random.choice(opts)
         res: Status = self.sql.modify_balance(ctx.author.id, amount)
         if res.status:
-            await ctx.send(embed=self.embeds.success(f"If you're a broke boy just say so... you got {amount} money"))
+            await ctx.send(embed=self.embeds.base(title="Beg result", description=f"If you're a broke boy just say so... you got {amount} money", color="success"))
         else:
-            await ctx.send(embed=self.embeds.error(f"Fuck off poor boy"))
+            await ctx.send(embed=self.embeds.base(title="Beg result", description=f"Fuck off poor boy", color="error"))
 
     @commands.command("baltop", description="View the top 10 balances")
     async def baltop(self, ctx: commands.Context):
         users: List["User.UserData"] = self.sql.get_highest_balances(10)
-        await ctx.send(embed=self.embeds.success(f"Top 10 balances:\n{'\n'.join([f'<@{user.discord_id}> - ``{user.balance}``' for user in users])}"))
+        await ctx.send(embed=self.embeds.base(title="Top 10 balances", description=f"{'\n'.join([f'<@{user.discord_id}> - ``{user.balance}``' for user in users])}", color="success"))
