@@ -28,7 +28,7 @@ class CoinflipStats:
             games_won=data.get("games_won", 0),
             games_lost=data.get("games_lost", 0),
             money_won=data.get("money_won", 0),
-            money_lost=data.get("money_lost", 0),
+            money_lost=abs(data.get("money_lost", 0)),
             most_lost=data.get("most_lost", 0),
             most_lost_to_id=data.get("most_lost_to_id", 0),
             loss_streak=data.get("loss_streak", 0)

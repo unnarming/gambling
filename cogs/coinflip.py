@@ -53,11 +53,9 @@ class CoinflipCog(commands.Cog):
             user = ctx.author
         elif user is None:
             return await ctx.send(embed=self.embeds.error("Please specify a user to view statistics"))
-        print(user)
-        print(user.id)
         cf_stats: CoinflipStats = self.sql.get_stats(user.id, CoinflipStats)
-        mlostto: discord.User = await self.bot.fetch_user(cf_stats.most_lost_to_id)
-        return await ctx.send(embed=self.embeds.base(title=f"Coinflip statistics", description=f"User: {user.mention}\nGames won: ``{cf_stats.games_won}``\nGames lost: ``{cf_stats.games_lost}``\nMoney won: ``{cf_stats.money_won}``\nMoney lost: ``{cf_stats.money_lost}``\nMost lost: ``{cf_stats.most_lost}``\nMost lost to: ``{mlostto.mention}``\nLoss streak: ``{cf_stats.loss_streak}``"))
+        mlostto: discord.User = await self.bot.fetch_user(cf_stats.most_lost_to_id) if cf_stats.most_lost_to_id else None
+        return await ctx.send(embed=self.embeds.base(title=f"Coinflip statistics", description=f"User: {user.mention}\nGames won: ``{cf_stats.games_won}``\nGames lost: ``{cf_stats.games_lost}``\nMoney won: ``{cf_stats.money_won}``\nMoney lost: ``{cf_stats.money_lost}``\nMost lost: ``{cf_stats.most_lost}``\nMost lost to: {mlostto.mention if mlostto else "``None``"}\nLoss streak: ``{cf_stats.loss_streak}``"))
 
     @coinflip.command(name="accept", description="Accept a coinflip request")
     async def accept(self, ctx: commands.Context, user: discord.Member | None = None, id: str | None = None):
@@ -69,7 +67,7 @@ class CoinflipCog(commands.Cog):
         
         cf: Coinflip.CoinflipData = res.body
         # send a embed with the coinflip details (winner, loser, amount)
-        return await ctx.send(embed=self.embeds.base(title=f"<@{cf["winner"]}> just beat <@{cf["loser"]}> in a coinflip of {cf["amount"]}", description=""))
+        return await ctx.send(embed=self.embeds.base(title="Coinflip Result", description=f"<@{cf["winner"]}> just beat <@{cf["loser"]}> in a coinflip of {cf["amount"]}", color="success"))
 
     @coinflip.command(name="view", description="View your coinflip requests/public coinflips")
     async def view(self, ctx: commands.Context, type: str = Literal["requests", "public", "self"]):
