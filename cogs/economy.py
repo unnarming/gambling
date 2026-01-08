@@ -40,11 +40,15 @@ class EconomyCog(commands.Cog):
     @commands.cooldown(1, 5, commands.BucketType.user)
     @commands.check(MiscCog.bot_channel_check)
     async def beg(self, ctx: commands.Context):
-        opts: list[int] = [50, 50, 50, 50, 50, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 300, 300, 300, 300, 300, 300, 500, 900, 500, 900, 2000]
-        amount: int = random.choice(opts)
-        res: Status = self.sql.modify_balance(ctx.author.id, amount)
-        if res.status:
-            await ctx.send(embed=self.embeds.base(title="Beg result", description=f"If you're a broke boy just say so... you got {amount} money", color="success"))
+        if random.random() < 0.8333333333333334:
+            beg_opts: list[int] = [50, 50, 50, 50, 50, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 300, 300, 300, 300, 300, 300, 500, 900, 500, 900, 2000]
+            robbed_opts: list[int] = [50, 50, 50, 50, 50, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 300, 300, 300, 300, 300, 300, 500, 900, 500, 900, 1000]
+            amount: int = random.choice(beg_opts) if random.random() < 0.8333333333333334 else -random.choice(robbed_opts)
+            self.sql.modify_balance(ctx.author.id, amount)
+            if amount > 0:
+                await ctx.send(embed=self.embeds.base(title="Beg result", description=f"If you're a broke boy just say so... you got {amount} money", color="success"))
+            else:
+                await ctx.send(embed=self.embeds.base(title="Beg result", description=f"Get fucking robbed pooron, you lost {amount} money", color="error"))
         else:
             await ctx.send(embed=self.embeds.base(title="Beg result", description=f"Fuck off poor boy", color="error"))
 
