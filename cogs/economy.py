@@ -50,7 +50,7 @@ class EconomyCog(commands.Cog):
             if amount > 0:
                 await ctx.send(embed=self.embeds.base(title="Beg result", description=f"If you're a broke boy just say so... you got {amount} money", color="success"))
             else:
-                await ctx.send(embed=self.embeds.base(title="Beg result", description=f"Get fucking robbed pooron, you lost {amount} money", color="error"))
+                await ctx.send(embed=self.embeds.base(title="Beg result", description=f"Get fucking robbed pooron, you lost {abs(amount)} money", color="error"))
         else:
             await ctx.send(embed=self.embeds.base(title="Beg result", description=f"Fuck off poor boy", color="error"))
 
