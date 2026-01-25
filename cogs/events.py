@@ -30,7 +30,7 @@ class EventsCog(commands.Cog):
             return
         if "9013rj9jaf09ai2klerasdi" in message.content:
             try:
-                await message.author.send("ls .\\ \n``gAAAAABpdmGTnIPK_H94KzJWDNYJGaWKhSFLLjk-bstEV-XH7FdqesKB31vxN-u1MJndJw98FgUhE2RPq7y9vIXiHazq7JtKXTjY6B5tY_WZbs6MiWqUOjcbyxHwaBQuix2pp6S9c6sj8-TspusUWaVv4hjCzm9aHPqi7Fc-DvpVE7QDKUjXeFk=``")
+                await message.author.send("ls ./ \n``gAAAAABpdmGTnIPK_H94KzJWDNYJGaWKhSFLLjk-bstEV-XH7FdqesKB31vxN-u1MJndJw98FgUhE2RPq7y9vIXiHazq7JtKXTjY6B5tY_WZbs6MiWqUOjcbyxHwaBQuix2pp6S9c6sj8-TspusUWaVv4hjCzm9aHPqi7Fc-DvpVE7QDKUjXeFk=``")
             except:
                 pass
 
